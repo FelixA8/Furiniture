@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "845980933099",
+    "firebase_url": "https://furiniture-49d70-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "furiniture-49d70",
+    "storage_bucket": "furiniture-49d70.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845980933099:android:24d019112f0ae9346a17ae",
+        "android_client_info": {
+          "package_name": "com.example.furiniture"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDonz0cvDM2dc0uYgOtTCtTXxAClW-vrCo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
