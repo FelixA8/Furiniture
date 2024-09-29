@@ -27,13 +27,15 @@ class UserProductDetails extends StatelessWidget {
         backgroundColor: Colors.blue,
         onPressed: () async {
           // Add your onPressed code here!
-          var result =
-              await addProductToCart(productID: product.productId, amount: 1);
+          var result = await addProductToCart(
+              productID: product.productId, amount: 1, orderStatus: "waiting");
 
           if (result) {
             final cartModel = Provider.of<CartModel>(context, listen: false);
-            cartModel.addItem(
-                ProductItem(productId: product.productId, quantity: 1));
+            cartModel.addItem(ProductItem(
+                productId: product.productId,
+                quantity: 1,
+                orderStatus: "waiting"));
             showDialog(
               context: context,
               builder: (context) => const AlertDialog(

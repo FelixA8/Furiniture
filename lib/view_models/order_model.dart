@@ -1,61 +1,46 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:furiniture/view_models/product_item.dart';
 
-class Order {
+class MyOrder {
   final String orderId;
-  final String customerId;
-  final String sellerId;
-  final String orderStatus;
+  final String userId;
   final int totalAmount;
   final List<ProductItem> productItems;
   final DateTime orderDate;
-  final DateTime deliveryDate;
   final String deliveryAddress;
-  final String paymentMethod;
+  MyOrder({
+    required this.orderId,
+    required this.userId,
+    required this.totalAmount,
+    required this.productItems,
+    required this.orderDate,
+    required this.deliveryAddress,
+  });
 
-  Order(
-      {required this.orderId,
-      required this.customerId,
-      required this.sellerId,
-      required this.orderStatus,
-      required this.totalAmount,
-      required this.productItems,
-      required this.orderDate,
-      required this.deliveryDate,
-      required this.deliveryAddress,
-      required this.paymentMethod});
-
-  // Factory method to create an Order object from JSON
-  factory Order.fromJson(Map<String, dynamic> json) {
-    var productItemsJson = json['productItems'] as List;
+  // Factory method to create an MyOrder object from JSON
+  factory MyOrder.fromJson(Map<String, dynamic> json, orderId) {
+    var productItemsJson = json['orderItems'] as List;
     List<ProductItem> productItems =
         productItemsJson.map((item) => ProductItem.fromJson(item)).toList();
-    return Order(
-      orderId: json['orderId'],
-      customerId: json['customerId'],
-      sellerId: json['sellerId'],
-      orderStatus: json['orderStatus'],
+    return MyOrder(
+      orderId: orderId,
+      userId: json['userId'],
       totalAmount: json['totalAmount'],
       productItems: productItems,
-      orderDate: json['orderDate'],
-      deliveryDate: json['deliveryDate'],
+      orderDate: (json['orderDate'] as Timestamp).toDate(),
       deliveryAddress: json['deliveryAddress'],
-      paymentMethod: json['paymentMethod'],
     );
   }
 
-  // Convert Order object to JSON
+  // Convert MyOrder object to JSON
   Map<String, dynamic> toJson() {
     return {
       'orderId': orderId,
-      'customerId': customerId,
-      'sellerId': sellerId,
-      'orderStatus': orderStatus,
+      'userId': userId,
       'totalAmount': totalAmount,
       'productItems': productItems.map((item) => item.toJson()).toList(),
-      'orderDate': orderDate.toIso8601String(),
-      'deliveryDate': deliveryDate.toIso8601String(),
+      'orderDate': orderDate,
       'deliveryAddress': deliveryAddress,
-      'paymentMethod': paymentMethod
     };
   }
 }

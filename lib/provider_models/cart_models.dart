@@ -48,6 +48,11 @@ class CartModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAllItem() {
+    _cartList.clear();
+    notifyListeners();
+  }
+
   void updateItemQuantity(ProductItem item, int quantity) {
     // Update item logic here
     notifyListeners();

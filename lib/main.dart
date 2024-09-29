@@ -7,8 +7,10 @@ import 'package:furiniture/screens/seller/navigation/seller_add_item_screen.dart
 import 'package:furiniture/screens/seller/navigation/seller_layout_navbar.dart';
 import 'package:furiniture/screens/seller/navigation/seller_product_detail_screen.dart';
 import 'package:furiniture/screens/user/navigation/seller_registration_navigation.dart';
+import 'package:furiniture/screens/user/navigation/user_checkout_navigation.dart';
 import 'package:furiniture/screens/user/navigation/user_layout_navbar.dart';
 import 'package:furiniture/screens/user/navigation/user_product_details.dart';
+import 'package:furiniture/screens/user/navigation/user_transaction_history_navigation.dart';
 import 'package:furiniture/view_models/product_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +42,7 @@ final GoRouter _router = GoRouter(initialLocation: "/", routes: [
         return UserLayoutNavBar(state: state, uid: uid);
       },
       routes: [
+        
         GoRoute(
           path: "product-details",
           builder: (context, state) {
@@ -47,6 +50,18 @@ final GoRouter _router = GoRouter(initialLocation: "/", routes: [
             return UserProductDetails(
               product: product,
             );
+          },
+        ),
+        GoRoute(
+          path: "transaction-history",
+          builder: (context, state) {
+            return UserTransactionHistoryNavigation();
+          },
+        ),
+        GoRoute(
+          path: "checkout",
+          builder: (context, state) {
+            return const UserCheckoutNavigation();
           },
         ),
         GoRoute(

@@ -5,6 +5,7 @@ import 'package:furiniture/services/format_services.dart';
 import 'package:furiniture/services/person_firebase.dart';
 import 'package:furiniture/view_models/product_item.dart';
 import 'package:furiniture/view_models/product_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class UserCartMenu extends StatefulWidget {
@@ -17,6 +18,7 @@ class UserCartMenu extends StatefulWidget {
 class _UserCartMenuState extends State<UserCartMenu> {
   late List<ProductItem> cartList;
   var isLoading = true;
+  var canCheckout = true;
 
   void _removeItem(int index) {
     // Remove the item from the data list
@@ -68,107 +70,121 @@ class _UserCartMenuState extends State<UserCartMenu> {
         updatedAt: DateTime(2024),
       ),
     );
+    if (product.stock == 0) {
+      canCheckout = false;
+    } else {
+      canCheckout = true;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Card(
-        elevation: 5,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image Section
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Image.network(
-                product.image,
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 8),
-
-            // Product Info Section
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Product Name
-                    Text(
-                      product.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 12,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      maxLines: 1,
-                    ),
-                    // Product Price
-                    Text(
-                      formatToRupiah(product.price * cartList[index].quantity),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      maxLines: 1,
-                    ),
-                  ],
+      child: InkWell(
+        onTap: () {
+          GoRouter.of(context)
+              .push("/user/$userID/product-details", extra: product);
+        },
+        child: Card(
+          elevation: 5,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image Section
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Image.network(
+                  product.image,
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-            // Quantity Section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 12, bottom: 12),
-                  child: Row(
+              const SizedBox(width: 8),
+
+              // Product Info Section
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          _subItem(cartList.indexOf(item)); // Decrease quantity
-                          changeCartProductItemValue(
-                              operation: "sub",
-                              prevAmount: item.quantity,
-                              productID: item.productId);
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          child: Text('-'),
+                      // Product Name
+                      Text(
+                        product.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                        maxLines: 1,
                       ),
-                      Text(item.quantity.toString()), // Display the quantity
-                      InkWell(
-                        onTap: () {
-                          _addItem(cartList.indexOf(item));
-                          changeCartProductItemValue(
-                              operation: "add",
-                              prevAmount: item.quantity,
-                              productID: item.productId);
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          child: Text('+'),
+                      // Product Price
+                      Text(
+                        formatToRupiah(
+                            product.price * cartList[index].quantity),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                        maxLines: 1,
                       ),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: InkWell(
-                    onTap: () {
-                      _removeItem(cartList.indexOf(item));
-                    },
-                    child: const Icon(Icons.delete),
+              ),
+              // Quantity Section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 12),
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            _subItem(
+                                cartList.indexOf(item)); // Decrease quantity
+                            changeCartProductItemValue(
+                                operation: "sub",
+                                prevAmount: item.quantity,
+                                productID: item.productId);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            child: Text('-'),
+                          ),
+                        ),
+                        Text(item.quantity.toString()), // Display the quantity
+                        InkWell(
+                          onTap: () {
+                            _addItem(cartList.indexOf(item));
+                            changeCartProductItemValue(
+                                operation: "add",
+                                prevAmount: item.quantity,
+                                productID: item.productId);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            child: Text('+'),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )
-              ],
-            )
-          ],
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: InkWell(
+                      onTap: () async {
+                        deleteItem(productID: item.productId);
+                        _removeItem(cartList.indexOf(item));
+                      },
+                      child: const Icon(Icons.delete),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -211,12 +227,17 @@ class _UserCartMenuState extends State<UserCartMenu> {
               ? null
               : FloatingActionButton.extended(
                   backgroundColor: Colors.blue,
-                  onPressed: () async {
+                  onPressed: () {
                     // Add your onPressed code here!
+                    if (canCheckout) {
+                      GoRouter.of(context).push("/user/$userID/checkout");
+                    } else {
+                      print('cannot checkout');
+                    }
                   },
                   label: Text(
                     formatToRupiah(cartModel.totalPrice),
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                   icon: const Icon(
                     Icons.shopping_cart,

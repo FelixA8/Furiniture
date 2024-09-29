@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:furiniture/global/global_data.dart';
+import 'package:furiniture/view_models/order_model.dart';
 import 'package:furiniture/view_models/person_model.dart';
 import 'package:furiniture/view_models/product_item.dart';
 import 'package:go_router/go_router.dart';
@@ -103,7 +104,7 @@ Future<void> logout(BuildContext context) async {
   }
 }
 
-Future<bool> addProductToCart({productID, amount}) async {
+Future<bool> addProductToCart({productID, amount, orderStatus}) async {
   try {
     // Reference the user's document
     DocumentReference userDoc =
@@ -124,12 +125,12 @@ Future<bool> addProductToCart({productID, amount}) async {
     Map<String, dynamic> product = {
       'productID': productID,
       'quantity': amount,
+      'orderStatus': orderStatus,
     };
     await FirebaseFirestore.instance.collection('users').doc(userID).update({
       'cart': FieldValue.arrayUnion([product]),
     }); //new cart added with the object productID, amount
-    globalUserData.cart
-        .add(ProductItem(productId: productID, quantity: amount));
+    
     return true;
   } catch (e) {
     throw Exception(e);
@@ -152,9 +153,9 @@ Future<bool> changeCartProductItemValue(
     // Convert the cart data to List<ProductItem>
     List<ProductItem> cart = cartData.map((item) {
       return ProductItem(
-        productId: item['productID'],
-        quantity: item['quantity'],
-      );
+          productId: item['productID'],
+          quantity: item['quantity'],
+          orderStatus: "waiting");
     }).toList();
 
     // Check if the product exists in the cart
@@ -166,14 +167,14 @@ Future<bool> changeCartProductItemValue(
 
       if (operation == "add") {
         cart[index] = ProductItem(
-          productId: cart[index].productId,
-          quantity: cart[index].quantity + 1,
-        );
+            productId: cart[index].productId,
+            quantity: cart[index].quantity + 1,
+            orderStatus: "waiting");
       } else if (operation == "sub" && cart[index].quantity > 1) {
         cart[index] = ProductItem(
-          productId: cart[index].productId,
-          quantity: cart[index].quantity - 1,
-        );
+            productId: cart[index].productId,
+            quantity: cart[index].quantity - 1,
+            orderStatus: "waiting");
       }
 
       // Convert back to List of Maps to update Firestore
@@ -193,5 +194,45 @@ Future<bool> changeCartProductItemValue(
     }
   } catch (e) {
     throw Exception(e);
+  }
+}
+
+Future<bool> deleteItem({productID}) async {
+  try {
+    // Reference the user's document
+    DocumentReference userDoc =
+        FirebaseFirestore.instance.collection('users').doc(userID);
+    DocumentSnapshot userSnapshot = await userDoc.get();
+    List<dynamic> cartData = userSnapshot.get('cart');
+    // Convert the cart data to List<ProductItem>
+    List<ProductItem> cart = cartData.map((item) {
+      return ProductItem(
+          productId: item['productID'],
+          quantity: item['quantity'],
+          orderStatus: "waiting");
+    }).toList();
+
+    // Check if the product exists in the cart
+    bool productExists = cart.any((item) => item.productId == productID);
+    if (productExists) {
+      // Find the product in the cart and update its quantity
+      int index = cart.indexWhere((item) => item.productId == productID);
+      cart.removeAt(index);
+      // Convert back to List of Maps to update Firestore
+      List<Map<String, dynamic>> updatedCart = cart.map((item) {
+        return {
+          'productID': item.productId,
+          'quantity': item.quantity,
+        };
+      }).toList();
+      // Update the cart in Firestore
+      await userDoc.update({'cart': updatedCart});
+
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    return false;
   }
 }

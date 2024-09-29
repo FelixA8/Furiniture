@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:furiniture/global/global_data.dart';
 import 'package:furiniture/services/person_firebase.dart';
 import 'package:furiniture/view_models/person_model.dart';
 import 'package:go_router/go_router.dart';
@@ -147,31 +148,14 @@ class _UserAccountMenuState extends State<UserAccountMenu> {
                 child: Column(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        GoRouter.of(context)
+                            .push("/user/$userID/transaction-history");
+                      },
                       child: const Row(
                         children: [
                           Text(
-                            "Transaction Status",
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w300),
-                          ),
-                          Spacer(),
-                          Icon(
-                            Icons.chevron_right,
-                            color: Colors.grey,
-                          )
-                        ],
-                      ),
-                    ),
-                    const Divider(
-                      thickness: 0.75,
-                    ),
-                    InkWell(
-                      onTap: () {},
-                      child: const Row(
-                        children: [
-                          Text(
-                            "See Transaction Histoy",
+                            "See Transactions",
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w300),
                           ),
