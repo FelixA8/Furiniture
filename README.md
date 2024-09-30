@@ -45,3 +45,32 @@ Before you begin, ensure you have met the following requirements:
    ```bash
    git clone https://github.com/yourusername/furniture-ar-shopping-app.git
    cd furniture-ar-shopping-app
+
+2. Clone the repository:
+   ```bash
+   flutter pub get
+
+3. Set up Firebase:
+   - Go to the Firebase Console, create a project, and configure your app for Android and iOS.
+   - Download the **google-services.json** file for Android and **GoogleService-Info.plist** for iOS and place them in the respective directories.
+
+4. Run the app:
+   ```bash
+   flutter run
+
+### ARCore / ARKit Setup
+**For Android:** Ensure your device supports ARCore. You'll need to install the ARCore library on your device.
+**For iOS:** ARKit is supported on devices running iOS 11 or later. Ensure you are testing on a compatible device (ARKit is not available on the simulator).
+
+### Folder Structure
+lib/
+├── view_models/           # Data models for Furniture and User
+├── provider_models/       # Provider for managing state
+├── global/                # Store temporary data to global variable. Resets everytime application is destroyed
+├── services/              # Firebase and AR services
+├── screens/               # UI screens (login, home, product details, AR viewer)
+├── widgets/               # Custom widgets
+├── firebase_options.dart  # Firebase Options
+└── main.dart              # Main app file
+
+<p align="center">Built with 💙 using Flutter and Firebase</p>
