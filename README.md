@@ -11,14 +11,6 @@
 - **Real-time Database:** Sync and fetch furniture details and orders in real-time with Firebase Firestore.
 - **Responsive Design:** Works across iOS and Android platforms.
 
-## Demo
-
-<p align="center">
-  <img src="demo.gif" alt="Demo GIF" width="300"/>
-</p>
-
-Try out the AR features and experience how furniture would look in your room before making a purchase.
-
 ## Technology Stack
 
 - **Flutter:** UI toolkit for building natively compiled applications.
@@ -43,8 +35,8 @@ Before you begin, ensure you have met the following requirements:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/furniture-ar-shopping-app.git
-   cd furniture-ar-shopping-app
+   git clone https://github.com/FelixA8/Furiniture.git
+   cd Furiniture
 
 2. Clone the repository:
    ```bash
@@ -63,14 +55,16 @@ Before you begin, ensure you have met the following requirements:
 **For iOS:** ARKit is supported on devices running iOS 11 or later. Ensure you are testing on a compatible device (ARKit is not available on the simulator).
 
 ### Folder Structure
-lib/
-├── view_models/           # Data models for Furniture and User
-├── provider_models/       # Provider for managing state
-├── global/                # Store temporary data to global variable. Resets everytime application is destroyed
-├── services/              # Firebase and AR services
-├── screens/               # UI screens (login, home, product details, AR viewer)
-├── widgets/               # Custom widgets
-├── firebase_options.dart  # Firebase Options
-└── main.dart              # Main app file
+
+    ```bash
+    lib/
+    ├── view_models/           # Data models for Furniture and User
+    ├── provider_models/       # Provider for managing state
+    ├── global/                # Store temporary data to global variable. Resets everytime application is destroyed
+    ├── services/              # Firebase and AR services
+    ├── screens/               # UI screens (login, home, product details, AR viewer)
+    ├── widgets/               # Custom widgets
+    ├── firebase_options.dart  # Firebase Options
+    └── main.dart              # Main app file
 
 <p align="center">Built with 💙 using Flutter and Firebase</p>
