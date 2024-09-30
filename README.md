@@ -54,7 +54,7 @@ Before you begin, ensure you have met the following requirements:
 **For Android:** Ensure your device supports ARCore. You'll need to install the ARCore library on your device.
 **For iOS:** ARKit is supported on devices running iOS 11 or later. Ensure you are testing on a compatible device (ARKit is not available on the simulator).
 
-### Folder Structure
+## Folder Structure
 
     ```bash
     lib/
