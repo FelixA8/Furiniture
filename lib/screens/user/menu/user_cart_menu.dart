@@ -72,6 +72,8 @@ class _UserCartMenuState extends State<UserCartMenu> {
     );
     if (product.stock == 0) {
       canCheckout = false;
+    } else if (product.stock < item.quantity) {
+      canCheckout = false;
     } else {
       canCheckout = true;
     }

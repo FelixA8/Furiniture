@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:furiniture/services/seller_firebase.dart';
+import 'package:furiniture/view_models/product_item.dart';
 import 'package:furiniture/view_models/product_model.dart';
 
 Future<List<Product>> getSellerProduct({sellerID}) async {
@@ -73,4 +74,30 @@ Future<List<Product>> getRandomTop5Products(List<Product> resultList) async {
   resultList.shuffle();
   List<Product> top5Products = resultList.take(5).toList();
   return top5Products;
+}
+
+Future<void> changeProductStock(
+    {required ProductItem productItem, operation}) async {
+  try {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productItem.productId)
+        .get();
+
+    var product =
+        Product.fromJson(userDoc.data() as Map<String, dynamic>, userDoc.id);
+    var amount = product.stock;
+    if (operation == "add") {
+      amount += productItem.quantity;
+    } else if (operation == "sub") {
+      amount -= productItem.quantity;
+    }
+
+    await FirebaseFirestore.instance
+        .collection('products')
+        .doc(productItem.productId)
+        .update({"stock": amount});
+  } catch (e) {
+    throw Exception(e);
+  }
 }

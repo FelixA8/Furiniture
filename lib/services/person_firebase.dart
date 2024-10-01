@@ -130,7 +130,7 @@ Future<bool> addProductToCart({productID, amount, orderStatus}) async {
     await FirebaseFirestore.instance.collection('users').doc(userID).update({
       'cart': FieldValue.arrayUnion([product]),
     }); //new cart added with the object productID, amount
-    
+
     return true;
   } catch (e) {
     throw Exception(e);

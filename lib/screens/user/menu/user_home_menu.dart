@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:furiniture/services/product_firebase.dart';
 import 'package:furiniture/view_models/product_model.dart';
@@ -56,6 +58,7 @@ class _UserHomeMenuState extends State<UserHomeMenu> {
   @override
   void dispose() {
     _pagingController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -65,28 +68,33 @@ class _UserHomeMenuState extends State<UserHomeMenu> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 24, bottom: 12),
-                child: SearchInput(
-                  hintText: "Search",
-                  textController: controller,
-                ),
-              ),
-              Expanded(
-                child: Padding(
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Column(
+              children: [
+                Padding(
                   padding: const EdgeInsets.only(top: 24, bottom: 12),
-                  child: PagedListView<int, Product>(
-                    pagingController: _pagingController,
-                    builderDelegate: PagedChildBuilderDelegate<Product>(
-                      itemBuilder: (context, item, index) =>
-                          ProductCardUser(product: item),
+                  child: SearchInput(
+                    hintText: "Search",
+                    textController: controller,
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 24, bottom: 12),
+                    child: PagedListView<int, Product>(
+                      pagingController: _pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<Product>(
+                        itemBuilder: (context, item, index) =>
+                            ProductCardUser(product: item),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -94,12 +102,38 @@ class _UserHomeMenuState extends State<UserHomeMenu> {
   }
 }
 
-class SearchInput extends StatelessWidget {
+class SearchInput extends StatefulWidget {
   final TextEditingController textController;
   final String hintText;
   const SearchInput(
       {required this.textController, required this.hintText, Key? key})
       : super(key: key);
+
+  @override
+  State<SearchInput> createState() => _SearchInputState();
+}
+
+class _SearchInputState extends State<SearchInput> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _debounce?.cancel();
+  }
+
+  void _onSearchChanged(String query) {
+    // Cancel any previous timers to prevent multiple triggers
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+
+    // Start a new timer that waits for 1 seconds before showing the list
+    _debounce = Timer(const Duration(seconds: 1), () {
+      // After the timer ends, proceed to display the list of items
+      print("Display items for: $query");
+      // Call your method to fetch and display items based on the query
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +146,11 @@ class SearchInput extends StatelessWidget {
             color: Colors.grey.withOpacity(.1)),
       ]),
       child: TextField(
-        controller: textController,
+        controller: widget.textController,
         onChanged: (value) {
-          //Do something wi
+          _onSearchChanged(value);
         },
+        onTapOutside: (event) => FocusScope.of(context).unfocus(),
         decoration: InputDecoration(
           prefixIcon: const Icon(
             Icons.search,
@@ -123,7 +158,7 @@ class SearchInput extends StatelessWidget {
           ),
           filled: true,
           fillColor: Colors.white,
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle: const TextStyle(color: Colors.grey),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),

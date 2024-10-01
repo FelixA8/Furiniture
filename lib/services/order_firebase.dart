@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:furiniture/services/person_firebase.dart';
+import 'package:furiniture/services/product_firebase.dart';
 import 'package:furiniture/view_models/product_item.dart';
 import 'package:furiniture/view_models/order_model.dart';
 
@@ -26,6 +28,9 @@ Future<void> createOrder(
     await FirebaseFirestore.instance.collection('users').doc(userId).update({
       'cart': [],
     });
+    for (ProductItem item in orderItems) {
+      await changeProductStock(productItem: item, operation: "sub");
+    }
 
     print('Order has been made and added to Firestore!');
   } catch (e) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:furiniture/provider_models/cart_models.dart';
+import 'package:furiniture/provider_models/seller_models.dart';
 import 'package:furiniture/screens/login_screen.dart';
 import 'package:furiniture/screens/register_screen.dart';
 import 'package:furiniture/screens/seller/navigation/seller_add_item_screen.dart';
@@ -19,8 +20,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => CartModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => CartModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SellerModel(),
+        )
+      ],
       child: const MyApp(),
     ),
   );
@@ -42,7 +50,6 @@ final GoRouter _router = GoRouter(initialLocation: "/", routes: [
         return UserLayoutNavBar(state: state, uid: uid);
       },
       routes: [
-        
         GoRoute(
           path: "product-details",
           builder: (context, state) {
